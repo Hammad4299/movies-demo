@@ -142,7 +142,7 @@ export async function addMovie(formData: FormData) {
 export async function updateMovie(formData: FormData) {
     const userId = await getUserId();
     const validatedFields = editMovieSchema.safeParse({
-        id: formData.get("id"),
+        id: Number(formData.get("id")),
         title: formData.get("title"),
         year: Number(formData.get("year")),
         userId: userId,
