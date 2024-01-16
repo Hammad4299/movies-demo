@@ -19,6 +19,8 @@ services:
             - 'traefik.http.services.movies-demo-dev.loadbalancer.server.port=3000'
         volumes:
             - movies-disk:/app/public/movies
+        networks:
+            movies-demo:
         environment:
             - DB_USER=postgres  #default
             - DB_PASSWORD=${DB_PASSWORD}
@@ -33,7 +35,7 @@ services:
         restart: always
         hostname: postgres-default14
         networks:
-            movies-db:
+            movies-demo:
                 aliases:
                     - postgres-default14
         expose:
@@ -43,6 +45,8 @@ services:
         environment:
             - POSTGRES_PASSWORD=${DB_PASSWORD}
             - POSTGRES_DB=${DB_NAME}
+networks:
+  movies-demo:        
 volumes:
     movies-disk:
     db:
