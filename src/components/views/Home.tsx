@@ -7,12 +7,13 @@ import Link from "next/link";
 import { Header } from "./Header";
 import { useRouter } from "next/navigation";
 import { PaginationHandler } from "../pagination/paginator";
+import { PaginatedResponse } from "@/types/pagination";
 
 interface Props {
-    data?: Movie[];
+    data?: PaginatedResponse<Movie>;
 }
-export const Home: React.FC<Props> = ({ data = [] }) => {
-    const [movieList, setMovieList] = useState(data);
+export const Home: React.FC<Props> = ({ data }) => {
+    const [movieList, setMovieList] = useState(data?.items || []);
     const maxPages = 10;
     const router = useRouter();
     const [pageNumber, setPageNumber] = useState(1);
@@ -27,7 +28,7 @@ export const Home: React.FC<Props> = ({ data = [] }) => {
     }
     return (
         <div>
-            {!data.length && (
+            {!data?.items.length && (
                 <React.Fragment>
                     <div className="min-h-screen text-white text-center flex justify-center items-center gap-3 flex-col">
                         <h1
@@ -41,7 +42,7 @@ export const Home: React.FC<Props> = ({ data = [] }) => {
                     </div>
                 </React.Fragment>
             )}
-            {data.length > 0 && (
+            {data?.items.length && data?.items.length > 0 && (
                 <div className="flex flex-col gap-3">
                     <Header />
                     <div className="grid 2xl:grid-cols-5 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 grid-cols-1 mt-16 gap-4">

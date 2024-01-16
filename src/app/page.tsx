@@ -4,8 +4,8 @@ import { myFn } from "@/temp-methods/my-fn";
 import React from "react";
 
 export const HomeServer: React.FC = async () => {
-    const data = await myFn(1);
-
+    const data = await getUserMovies(1);
+    
     return (
         <main className="container mx-auto">
             <Home data={data} />
