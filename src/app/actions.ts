@@ -11,6 +11,7 @@ import {
 } from "@/types/pagination";
 import { createReadStream } from "fs";
 import { writeFile } from "fs/promises";
+import { defaultTo } from "lodash";
 import { getServerSession } from "next-auth/next";
 import path from "path";
 import { z } from "zod";
@@ -70,6 +71,17 @@ export async function getUserMovies(page: number = 1) {
 
     throw new Error("Not authorized");
 }
+const uploadFile = async (file: File) => {
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    const relPath = `/public/movies/${Date.now()}_${file.name}`;
+    // With the file data in the buffer, you can do whatever you want with it.
+    // For this, we'll just write it to the filesystem in a new location
+    let filePath = path.join(defaultTo(process.env.PROJECT_ROOT?.toString(), relPath),);
+
+    await writeFile(filePath, buffer);
+    return relPath;
+}
 
 export async function addMovie(formData: FormData) {
     const userId = await getUserId();
@@ -90,13 +102,7 @@ export async function addMovie(formData: FormData) {
 
     let filePath;
     if (file) {
-        const bytes = await file.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-        // With the file data in the buffer, you can do whatever you want with it.
-        // For this, we'll just write it to the filesystem in a new location
-        filePath = path.join(__dirname, `../../public/movies/${file.name}`);
-
-        await writeFile(filePath, buffer);
+        filePath = await uploadFile(file);
     }
 
     // Mutate data
@@ -114,7 +120,7 @@ export async function updateMovie(formData: FormData) {
     const validatedFields = editMovieSchema.safeParse({
         id: formData.get("id"),
         title: formData.get("title"),
-        year: formData.get("year"),
+        year: Number(formData.get("year")),
         userId: userId,
     });
 
@@ -126,14 +132,10 @@ export async function updateMovie(formData: FormData) {
     }
 
     const file: File | null = formData.get("file") as unknown as File;
+
     let filePath;
     if (file) {
-        const bytes = await file.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-        // With the file data in the buffer, you can do whatever you want with it.
-        // For this, we'll just write it to the filesystem in a new location
-        filePath = `/public/movies/${file.name}`;
-        await writeFile(filePath, buffer);
+        filePath = await uploadFile(file);
     }
 
     // Mutate data
