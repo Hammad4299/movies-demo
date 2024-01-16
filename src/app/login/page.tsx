@@ -3,7 +3,7 @@ import InputComponent from "@/components/form/input";
 import React, { useState } from "react";
 import { Checkbox } from "flowbite-react";
 import AppButton from "@/components/form/button";
-import { validateEmail } from "@/utilts";
+import { validateEmail } from "@/helpers";
 import { useRouter } from "next/navigation";
 
 const LoginScreen: React.FC = () => {

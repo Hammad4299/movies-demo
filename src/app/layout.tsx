@@ -14,8 +14,8 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
-            <body className={`bg-appBg min-h-screen relative `}>
-                {children}
+            <body className={`bg-appBg min-h-screen relative text-white `}>
+                <div className="container mx-auto">{children}</div>
                 <div className="mt-auto absolute left-0 right-0 bottom-0">
                     <Image
                         alt=""

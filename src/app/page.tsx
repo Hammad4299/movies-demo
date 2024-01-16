@@ -1,10 +1,14 @@
+import Home from "@/components/views/Home";
+import { myFn } from "@/temp-methods/my-fn";
 import React from "react";
-interface Props {
-    
-}
 
-export const Home:React.FC<Props> = async () => {
-    return <main className=" "></main>;
+export const HomeServer: React.FC = async () => {
+    const data = await myFn(1);
+    return (
+        <main className="">
+            <Home data={data} />
+        </main>
+    );
 };
 
-export default Home;
+export default HomeServer;
