@@ -22,7 +22,7 @@ export default async function RootLayout({
 
     const pathname = heads.get("next-url");
 
-    console.log(pathname, session);
+    console.log("main layout session", pathname, session);
     // if (!session && pathname && !pathname.includes("login")) {
     //     redirect("/login");
     // }

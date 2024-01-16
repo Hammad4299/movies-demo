@@ -17,7 +17,7 @@ export const authenticateUser = async (email: string, password: string) => {
     const user = await UserModel.findOne({ where: { email: email } });
 
     if (user) {
-        console.log('got user', user.toJSON());
+
         if (await checkPassword(password, user.passwordHash)) {
             const { passwordHash, ...userInfo } = user.toJSON();
             return { user: userInfo, token: jwt.sign(userInfo, authSecret, { expiresIn: '1h' }) };

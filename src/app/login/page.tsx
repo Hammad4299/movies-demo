@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Checkbox } from "flowbite-react";
 import AppButton from "@/components/form/button";
 import { validateEmail } from "@/helpers";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 
 const LoginScreen: React.FC = () => {
@@ -23,7 +23,7 @@ const LoginScreen: React.FC = () => {
         setErrorState({ ...errorState, [name]: "" });
     }
 
-    function handleFormSubmit() {
+    async function handleFormSubmit() {
         const { email, password } = formData;
         const newErrorState: Partial<typeof errorState> = {};
         if (!email || !validateEmail(email)) {
@@ -34,7 +34,16 @@ const LoginScreen: React.FC = () => {
                 "Password must be at-least 6 characters long";
         }
         if (Object.keys(newErrorState).length === 0) {
-            signIn("email", { email });
+            console.log("signing in...");
+            const resp = await signIn("credentials", {
+                redirect: false,
+                email,
+                password,
+            });
+
+            if (resp?.ok) {
+                redirect("/");
+            }
         } else {
             setErrorState({ ...errorState, ...newErrorState });
         }
