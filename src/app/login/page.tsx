@@ -41,7 +41,7 @@ const LoginScreen: React.FC = () => {
     }
 
     return (
-        <div className="flex justify-center items-center min-h-screen">
+        <div className="flex justify-center items-center my-auto">
             <div className="min-w-[300px] flex flex-col items-center justify-center gap-2">
                 <h1 className="text-white text-h1 mb-4 font-semibold">
                     Sign In
@@ -68,7 +68,7 @@ const LoginScreen: React.FC = () => {
                     />
                     <label
                         htmlFor="rememberMe"
-                        className="text-white text-regular">
+                        className="text-white text-bodySmall">
                         Remember Me
                     </label>
                 </div>

@@ -5,7 +5,7 @@ import React from "react";
 export const HomeServer: React.FC = async () => {
     const data = await myFn(1);
     return (
-        <main className="">
+        <main className="container mx-auto">
             <Home data={data} />
         </main>
     );
