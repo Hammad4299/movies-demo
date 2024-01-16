@@ -1,32 +1,37 @@
 import NextAuth from "next-auth";
 import { authenticateUser } from "@/services/authService";
-import type { AuthOptions } from "next-auth"
-import CredentialsProvider from "next-auth/providers/credentials"
+import type { AuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
 
-export const authOptions: AuthOptions = {
+const authOptions: AuthOptions = {
     providers: [
         CredentialsProvider({
-            name: 'Credentials',
+            name: "Credentials",
             credentials: {
                 email: { label: "Email", type: "text" },
-                password: { label: "Password", type: "password" }
+                password: { label: "Password", type: "password" },
             },
-            async authorize(credentials: Record<"email" | "password", string> | undefined, req) {
-
+            async authorize(
+                credentials: Record<"email" | "password", string> | undefined,
+                req
+            ) {
                 if (typeof credentials !== "undefined") {
-                    const res = await authenticateUser(credentials.email, credentials.password);
+                    const res = await authenticateUser(
+                        credentials.email,
+                        credentials.password
+                    );
 
                     if (typeof res !== "undefined") {
-                        console.log('got token and logged in', res)
-                        return { ...res.user, apiToken: res.token }
+                        console.log("got token and logged in", res);
+                        return { ...res.user, apiToken: res.token };
                     } else {
-                        return null
+                        return null;
                     }
                 } else {
-                    return null
+                    return null;
                 }
-            }
-        })
+            },
+        }),
     ],
     secret: process.env.AUTH_SECRET,
     session: { strategy: "jwt" },
@@ -34,8 +39,8 @@ export const authOptions: AuthOptions = {
         async jwt({ token, user, account }) {
             if (typeof user !== "undefined") {
                 return { ...token, ...user };
-            };
-            return token
+            }
+            return token;
         },
         async session({ session, token, user }) {
             const sanitizedToken = Object.keys(token).reduce((p, c) => {
@@ -46,20 +51,24 @@ export const authOptions: AuthOptions = {
                     c !== "jti" &&
                     c !== "apiToken"
                 ) {
-                    return { ...p, [c]: token[c] }
+                    return { ...p, [c]: token[c] };
                 } else {
-                    return p
+                    return p;
                 }
-            }, {})
-            return { ...session, user: sanitizedToken, apiToken: token.apiToken }
+            }, {});
+            return {
+                ...session,
+                user: sanitizedToken,
+                apiToken: token.apiToken,
+            };
         },
     },
     // pages: {
     //     signIn: '/login',
     //     signOut: '/logout'
     // }
-}
+};
 
-const handler = NextAuth(authOptions)
+const handler = NextAuth(authOptions);
 
-export { handler as GET, handler as POST }
+export { handler as GET, handler as POST };
