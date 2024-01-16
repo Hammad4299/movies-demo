@@ -1,7 +1,7 @@
 name: Deploy Production
 on:
     push:
-        branches: [master]
+        branches: [develop]
 permissions:
     contents: write
 jobs:
@@ -16,6 +16,6 @@ jobs:
             tf_infra_workspace_name: ${{vars.prod_infra_workspace}}
             aws_account_id: ${{ vars.aws_account_id }}
             tailscale_login_server: ${{ vars.tailscale_login_server }}
-            docker_compose_path: devops/docker/docker-compose.prod.yml
+            docker_compose_path: devops/docker/docker-compose.dev.yml
             deployment_webhook_url: ${{ vars.deployment_webhook_url_prod }}
         secrets: inherit
