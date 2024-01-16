@@ -21,7 +21,7 @@ RUN yarn run build \
 FROM node:20-alpine
 WORKDIR /app
 RUN chown -R node /app
-COPY --chown=node --from=build [ "/app/package.json","/app/yarn.lock", "/app/.sequelizerc", "./"]
+COPY --chown=node --from=build [ "/app/package.json","/app/yarn.lock", "/app/public", "/app/.sequelizerc", "./"]
 COPY --chown=node --from=build ["/app/.next", "./.next"]
 COPY --chown=node --from=build ["/app/node_modules","/app/node_modules"]
 USER node
