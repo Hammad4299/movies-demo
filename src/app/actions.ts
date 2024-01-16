@@ -4,6 +4,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import MovieModel from '@/db/models/MovieModel';
 import { Movie } from '@/models';
 import { PaginatedResponse, PaginationParam, getOffsetFromPagination, getPaginationMeta } from '@/types/pagination';
+import { writeFile } from 'fs/promises';
 import { getServerSession } from 'next-auth/next';
 import { z } from 'zod'
 
@@ -11,7 +12,6 @@ const movSchema = {
     title: z.string({
         required_error: 'Title is required'
     }).min(2, { message: "Title can\'t be less than 2 characters" }),
-    poster: z.string(),
     year: z.number().gte(1900, { message: 'Year must be greater than 1900.' }),
     userId: z.string().uuid()
 };
@@ -47,7 +47,6 @@ export async function getUserMovies(page: number) {
 export async function addMovie(formData: FormData) {
     const validatedFields = movieSchema.safeParse({
         title: formData.get('title'),
-        poster: formData.get('poster'),
         year: formData.get('year'),
         userId: formData.get('userId'),
     })
@@ -59,8 +58,20 @@ export async function addMovie(formData: FormData) {
         }
     }
 
+    const file: File | null = formData.get('file') as unknown as File;
+    let filePath;
+    if (file) {
+        const bytes = await file.arrayBuffer()
+        const buffer = Buffer.from(bytes)
+        // With the file data in the buffer, you can do whatever you want with it.
+        // For this, we'll just write it to the filesystem in a new location
+        filePath = `/public/movies/${file.name}`
+        await writeFile(filePath, buffer);
+    }
+
+
     // Mutate data
-    const newEntry = MovieModel.build({ ...validatedFields.data as Movie })
+    const newEntry = MovieModel.build({ ...validatedFields.data, poster: filePath } as Movie)
 
     await newEntry.save();
     return { data: newEntry }
@@ -70,7 +81,6 @@ export async function updateMovie(formData: FormData) {
     const validatedFields = editMovieSchema.safeParse({
         id: formData.get('id'),
         title: formData.get('title'),
-        poster: formData.get('poster'),
         year: formData.get('year'),
         userId: formData.get('userId'),
     })
@@ -80,6 +90,17 @@ export async function updateMovie(formData: FormData) {
         return {
             errors: validatedFields.error.flatten().fieldErrors,
         }
+    }
+
+    const file: File | null = formData.get('file') as unknown as File;
+    let filePath;
+    if (file) {
+        const bytes = await file.arrayBuffer()
+        const buffer = Buffer.from(bytes)
+        // With the file data in the buffer, you can do whatever you want with it.
+        // For this, we'll just write it to the filesystem in a new location
+        filePath = `/public/movies/${file.name}`
+        await writeFile(filePath, buffer);
     }
 
     // Mutate data
@@ -95,7 +116,9 @@ export async function updateMovie(formData: FormData) {
     }
 
     row.title = validatedFields.data.title;
-    row.poster = validatedFields.data.poster;
+    if (filePath) {
+        row.poster = filePath;
+    }
     row.year = validatedFields.data.year;
 
     await row.save();
