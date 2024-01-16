@@ -61,7 +61,7 @@ export async function getUserMovies(page: number = 1) {
             offset: getOffsetFromPagination(params),
         });
         return {
-            items: movies,
+            items: movies.map(m => m.toJSON()),
             paginationMeta: getPaginationMeta(params, {
                 items: movies,
                 total: totalCount,
@@ -112,7 +112,7 @@ export async function addMovie(formData: FormData) {
     } as Movie);
 
     await newEntry.save();
-    return { data: newEntry };
+    return { data: newEntry.toJSON() };
 }
 
 export async function updateMovie(formData: FormData) {
@@ -158,7 +158,7 @@ export async function updateMovie(formData: FormData) {
 
     await row.save();
 
-    return { data: row };
+    return { data: row.toJSON() };
 }
 
 export async function deleteMovie(movieId: number) {
