@@ -12,9 +12,10 @@ export const authOptions: AuthOptions = {
                 password: { label: "Password", type: "password" }
             },
             async authorize(credentials: Record<"email" | "password", string> | undefined, req) {
-                console.log('inside', req, credentials)
+                console.log('inside', credentials)
                 if (typeof credentials !== "undefined") {
                     const res = await authenticateUser(credentials.email, credentials.password);
+                    console.log('response found', res)
                     if (typeof res !== "undefined") {
                         return { ...res.user, apiToken: res.token }
                     } else {
@@ -52,10 +53,10 @@ export const authOptions: AuthOptions = {
             return { ...session, user: sanitizedToken, apiToken: token.apiToken }
         },
     },
-    pages: {
-        signIn: '/login',
-        signOut: '/logout'
-    }
+    // pages: {
+    //     signIn: '/login',
+    //     signOut: '/logout'
+    // }
 }
 
 const handler = NextAuth(authOptions)
