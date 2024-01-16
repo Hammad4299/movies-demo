@@ -1,10 +1,10 @@
 "use client";
 import { Movie } from "@/models";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AppButton from "../form/button";
 import Link from "next/link";
 import { Header } from "./Header";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { PaginationHandler } from "../pagination/paginator";
 import { PaginatedResponse } from "@/types/pagination";
 import { getUserMovies } from "@/app/actions";
@@ -31,8 +31,19 @@ export const Home: React.FC<Props> = ({ data }) => {
             setMaxPages(data?.paginationMeta.totalPages);
         }
     }
+    const path = useSearchParams();
+    useEffect(() => {
+        const refreshVal = path.get("refresh");
+        console.log("I AM HERE", refreshVal);
+        if (refreshVal) {
+            router.push("/");
+            setTimeout(() => {
+                router.refresh();
+            }, 200);
+        }
+    }, []);
     return (
-        <div>
+        <div className="p-4 md:p-0">
             {!data?.items.length && (
                 <React.Fragment>
                     <div className="min-h-screen text-white text-center flex justify-center items-center gap-3 flex-col">
@@ -57,7 +68,7 @@ export const Home: React.FC<Props> = ({ data }) => {
                                     router.push(`/movie/${movie.id}`)
                                 }
                                 key={movie.id}
-                                className="hover:bg-[#1e414e] bg-appColor-100 rounded-[12px] p-2 pb-4 cursor-pointer duration-500 hover:bg-red">
+                                className="hover:bg-[#1e414e] bg-appColor-100 rounded-[12px] p-4 pb-8 md:p-2 md:pb-4 cursor-pointer duration-500 hover:bg-red">
                                 <div
                                     className="pb-2 mb-1"
                                     style={{ aspectRatio: "133/200" }}>

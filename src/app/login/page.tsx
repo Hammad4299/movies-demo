@@ -45,7 +45,7 @@ const LoginScreen: React.FC = () => {
                 });
 
                 if (resp?.ok) {
-                    router.push("/");
+                    router.push("/?refresh=true");
                 }
             } else {
                 setErrorState({ ...errorState, ...newErrorState });
@@ -89,7 +89,7 @@ const LoginScreen: React.FC = () => {
                     </label>
                 </div>
                 <AppButton
-                    loading={isSubmitting}
+                    disabled={isSubmitting}
                     onClick={handleFormSubmit}
                     className="mt-4">
                     Login

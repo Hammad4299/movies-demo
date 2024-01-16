@@ -31,12 +31,12 @@ export const Header: React.FC = () => {
                     <div
                         onClick={() => logoutUser()}
                         className="cursor-pointer ml-auto  flex items-center justify-end gap-2">
-                        <span className="text-[16px] font-bold">Logout</span>
+                        <span className="text-[16px] font-bold hidden md:block">Logout</span>
                         <Image
                             src="/img/logout.png"
                             alt="LogoutImg"
-                            width="24"
-                            height="24"
+                            width="30"
+                            height="30"
                         />
                     </div>
                 )}
