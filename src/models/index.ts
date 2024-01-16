@@ -14,4 +14,5 @@ export interface MovieCreatePayload {
 
 export interface Movie extends MovieCreatePayload {
     id: number;
+    userId: string;
 }

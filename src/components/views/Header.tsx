@@ -1,14 +1,19 @@
+"use client";
 import React from "react";
 import AppButton from "../form/button";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 export const Header: React.FC = () => {
+    const { data: session, status } = useSession();
+
     const router = useRouter();
     async function logoutUser() {
         console.log("logging out");
-        router.push("/login");
+        signOut();
     }
     return (
         <div>
@@ -22,17 +27,19 @@ export const Header: React.FC = () => {
                         height="30"
                     />
                 </Link>
-                <div
-                    onClick={() => logoutUser()}
-                    className="cursor-pointer ml-auto  flex items-center justify-end gap-2">
-                    <span className="text-[16px] font-bold">Logout</span>
-                    <Image
-                        src="/img/logout.png"
-                        alt="LogoutImg"
-                        width="24"
-                        height="24"
-                    />
-                </div>
+                {status == "authenticated" && (
+                    <div
+                        onClick={() => logoutUser()}
+                        className="cursor-pointer ml-auto  flex items-center justify-end gap-2">
+                        <span className="text-[16px] font-bold">Logout</span>
+                        <Image
+                            src="/img/logout.png"
+                            alt="LogoutImg"
+                            width="24"
+                            height="24"
+                        />
+                    </div>
+                )}
             </div>
         </div>
     );
