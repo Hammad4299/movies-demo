@@ -3,7 +3,7 @@ import "./globals.css";
 import Image from "next/image";
 import Provider from "@/app/context/ClientProvider";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/api/auth/[...nextauth]";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 

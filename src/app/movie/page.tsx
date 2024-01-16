@@ -1,7 +1,7 @@
 import CreateEditMovie from "@/components/views/CreateEditMovie";
 import React from "react";
 
-export const CreateMoviePage: React.FC = () => {
+const CreateMoviePage: React.FC = () => {
     return (
         <div>
             <CreateEditMovie />
