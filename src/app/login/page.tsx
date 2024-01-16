@@ -34,7 +34,6 @@ const LoginScreen: React.FC = () => {
                 "Password must be at-least 6 characters long";
         }
         if (Object.keys(newErrorState).length === 0) {
-            console.log("signing in...");
             const resp = await signIn("credentials", {
                 redirect: false,
                 email,
@@ -42,7 +41,7 @@ const LoginScreen: React.FC = () => {
             });
 
             if (resp?.ok) {
-                redirect("/");
+                router.push("/");
             }
         } else {
             setErrorState({ ...errorState, ...newErrorState });

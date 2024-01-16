@@ -30,17 +30,17 @@ export default async function RootLayout({
         <html lang="en">
             <body
                 className={`flex flex-col bg-appBg min-h-screen relative text-white gap-12`}>
-                {/* <Provider session={session}> */}
-                {children}
-                <div className="mt-auto  left-0 right-0 bottom-0">
-                    <Image
-                        alt=""
-                        width="1920"
-                        height="1080"
-                        src="/img/bg-bottom-bar.png"
-                    />
-                </div>
-                {/* </Provider> */}
+                <Provider session={session}>
+                    {children}
+                    <div className="mt-auto  left-0 right-0 bottom-0">
+                        <Image
+                            alt=""
+                            width="1920"
+                            height="1080"
+                            src="/img/bg-bottom-bar.png"
+                        />
+                    </div>
+                </Provider>
             </body>
         </html>
     );
