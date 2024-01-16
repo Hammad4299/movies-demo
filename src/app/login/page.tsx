@@ -5,6 +5,7 @@ import { Checkbox } from "flowbite-react";
 import AppButton from "@/components/form/button";
 import { validateEmail } from "@/helpers";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 const LoginScreen: React.FC = () => {
     const router = useRouter();
@@ -30,11 +31,10 @@ const LoginScreen: React.FC = () => {
         }
         if (password.length < 6) {
             newErrorState.password =
-                "Password must be atleast 6 characters long";
+                "Password must be at-least 6 characters long";
         }
         if (Object.keys(newErrorState).length === 0) {
-            alert("Log in successful");
-            router.push("/");
+            signIn("email", { email });
         } else {
             setErrorState({ ...errorState, ...newErrorState });
         }

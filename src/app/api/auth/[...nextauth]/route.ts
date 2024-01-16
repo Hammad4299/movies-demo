@@ -17,6 +17,7 @@ export const authOptions: AuthOptions = {
                     const res = await authenticateUser(credentials.email, credentials.password);
 
                     if (typeof res !== "undefined") {
+                        console.log('got token and logged in', res)
                         return { ...res.user, apiToken: res.token }
                     } else {
                         return null
@@ -53,10 +54,10 @@ export const authOptions: AuthOptions = {
             return { ...session, user: sanitizedToken, apiToken: token.apiToken }
         },
     },
-    // pages: {
-    //     signIn: '/login',
-    //     signOut: '/logout'
-    // }
+    pages: {
+        signIn: '/login',
+        signOut: '/logout'
+    }
 }
 
 const handler = NextAuth(authOptions)

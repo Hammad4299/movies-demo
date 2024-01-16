@@ -6,7 +6,6 @@ import React from "react";
 export const HomeServer: React.FC = async () => {
     const data = await myFn(1);
 
-    console.log(await getUserMovies());
     return (
         <main className="">
             <Home data={data} />
