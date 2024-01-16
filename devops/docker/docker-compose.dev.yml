@@ -20,10 +20,10 @@ services:
         volumes:
             - movies-disk:/app/public/movies
         environment:
-            - DB_USER=${DB_USER}
+            - DB_USER=postgres  #default
             - DB_PASSWORD=${DB_PASSWORD}
-            - DB_HOST=postgres-default14
-            - DB_PORT=${DB_PORT}
+            - DB_HOST=postgres-default14 #from compose
+            - DB_PORT=5432  #default
             - DB_NAME=${DB_NAME}
             - AUTH_SECRET=${AUTH_SECRET}
     postgres14:
@@ -42,6 +42,7 @@ services:
             - 5437:5432
         environment:
             - POSTGRES_PASSWORD=${DB_PASSWORD}
+            - POSTGRES_DB=${DB_NAME}
 volumes:
     movies-disk:
     db:
