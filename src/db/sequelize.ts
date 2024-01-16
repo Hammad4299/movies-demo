@@ -1,12 +1,14 @@
 
 import { Sequelize } from "sequelize";
 import databaseConfig from "./config";
-
-
+import * as pg from 'pg';
 
 export const sequelizeClient = new Sequelize({
   dialect: "postgres",
-  storage: databaseConfig.database_url,
+  username: databaseConfig.development.username,
+  password: databaseConfig.development.password,
+  host: databaseConfig.development.host,
+  dialectModule: pg,
 });
 
 sequelizeClient
