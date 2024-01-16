@@ -1,0 +1,53 @@
+name: "Deploy Terraform"
+description: "Inits terraform, import for specified environment in import script is present and finally apply terraform workspace"
+inputs:
+    extra_apply_args:
+        description: ""
+        required: false
+        default: ""
+    common_modules_dir_path:
+        description: ""
+        default: "common/tf-shared-modules"
+        required: false
+    environment:
+        description: ""
+        required: true
+    tf_workspace_root_path:
+        description: ""
+        required: true
+    tf_workspace_name:
+        description: ""
+        required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup env
+      shell: bash
+      run: |
+        echo $AWS_ACCESS_KEY_ID
+        echo "TF_ENV=${{ inputs.environment }}" >> $GITHUB_ENV
+        echo "TF_WORKSPACE=${{ inputs.tf_workspace_name }}" >> $GITHUB_ENV
+    - name: Setup Terraform CLI
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.6.6
+        terraform_wrapper: false
+    # - id: copy-common-modules
+    #   if: ${{ inputs.common_modules_dir_path != '' }}
+    #   shell: bash
+    #   run: |
+    #     cp -r ${{ inputs.common_modules_dir_path }} ${{ inputs.tf_workspace_root_path }}
+    - id: download-s3-config
+      shell: bash
+      working-directory: ${{ inputs.tf_workspace_root_path }}
+      run: |
+        aws s3api get-object --bucket teraception-terraform --key tf_env_configs/infra/${{ inputs.tf_workspace_name }}.tfvars ./locals.auto.tfvars
+    - name: Initialize Terraform
+      working-directory: ${{ inputs.tf_workspace_root_path }}
+      shell: bash
+      run: terraform init
+    - id: terraform-apply
+      shell: bash
+      working-directory: ${{ inputs.tf_workspace_root_path }}
+      run: terraform apply -auto-approve ${{ inputs.extra_apply_args }}

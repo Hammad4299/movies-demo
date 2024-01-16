@@ -1,0 +1,113 @@
+name: Docker
+on:
+    workflow_call:
+        inputs:
+            tf_infra_workspace_name:
+                required: true
+                type: string
+            ecr_repo_url:
+                required: true
+                type: string
+            build_image:
+                required: false
+                type: string
+                default: 'true'
+            environment:
+                required: true
+                type: string
+            aws_region:
+                required: true
+                type: string
+                default: 'me-south-1'
+            aws_account_id:
+                type: string
+                required: true
+            aws_key_id:
+                type: string
+                required: true
+            docker_user:
+                type: string
+                required: true
+            tailscale_login_server:
+                type: string
+                required: true
+            deployment_webhook_url:
+                type: string
+                required: true
+            docker_compose_path:
+                type: string
+                required: true
+
+env:
+    AWS_REGION: ${{ inputs.aws_region }}
+    AWS_ACCESS_KEY_ID: ${{ inputs.aws_key_id }}
+    AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    AWS_ACCOUNT_ID: ${{ inputs.aws_account_id }}
+    environment: ${{inputs.environment}}
+
+    FORCE_DEPLOYMENT: 'false'
+    # COMMON_DEPLOY_ARGS: " -var release=156 -var git_revision_hash=${{ github.sha }} "
+    COMMON_DEPLOY_ARGS: ' -var release=${{ github.run_number }} -var git_revision_hash=${{ github.sha }} '
+    RELEASE: ${{ github.run_number }}
+    DOCKER_PASSWORD: ${{ secrets.docker_password }}
+
+    # SENTRY_ORG: ${{ vars.SENTRY_ORG }}
+    # SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
+    # SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+
+jobs:
+    build-image:
+        runs-on: ubuntu-22.04
+        environment: ${{ inputs.environment }}
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+                  persist-credentials: false
+            - name: Configure AWS Credentials
+              uses: aws-actions/configure-aws-credentials@v2
+              with:
+                  aws-region: ${{ inputs.aws_region }}
+            - if: ${{ (inputs.build_image == 'true') || ( env.FORCE_DEPLOYMENT == 'true') }}
+              uses: ./.github/actions/build-docker-image
+              env:
+                  DOCKER_PROJECT_PATH: ${{inputs.ecr_repo_url}}
+              with:
+                  commit_sha: ${{ github.sha }}
+                  release_version: ${{ env.RELEASE }}
+                  docker_user: ${{ inputs.docker_user }}
+                  docker_password: ${{ env.DOCKER_PASSWORD }}
+    deploy-image:
+        needs: [build-image]
+        runs-on: ubuntu-22.04
+        environment: ${{ inputs.environment }}
+        permissions:
+            contents: write
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+            - name: Update image version
+              run: sed -E -i 's/(image:.*movies-demo:).*$/\1'"$RELEASE"'/g' ${{ inputs.docker_compose_path }} && cat ${{ inputs.docker_compose_path }}
+              shell: bash
+            - name: Commit changes
+
+              uses: EndBug/add-and-commit@v9
+              with:
+                  message: 'chore: updated image version to ${{ env.RELEASE }}'
+            - name: Tailscale
+              uses: tailscale/github-action@v2
+              with:
+                  authkey: ${{ secrets.tailscale_token }}
+                  version: '1.56.1'
+                  args: ' --login-server ${{inputs.tailscale_login_server }} '
+            - name: Trigger deploy
+              uses: fjogeleit/http-request-action@v1
+              env:
+                  NODE_TLS_REJECT_UNAUTHORIZED: '0'
+              with:
+                  url: ${{ inputs.deployment_webhook_url }}
+                  method: 'POST'
+                  timeout: 120000

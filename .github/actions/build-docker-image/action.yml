@@ -1,0 +1,37 @@
+name: "Build Docker image"
+description: "Builds docker image for background and assumes that practices/conventions for that is being followed."
+inputs:
+    docker_user:
+        description: ""
+        required: true
+    release_version:
+        description: ""
+        required: true
+    commit_sha:
+        description: ""
+        required: true
+    docker_password:
+        description: ""
+        required: true
+
+runs:
+    using: "composite"
+    steps:
+      - id: init-env
+        shell: bash
+        run: |
+            echo "DOCKER_BUILDKIT=1" >> $GITHUB_ENV
+            echo 'RELEASE_VERSION=${{ inputs.release_version }}' >> $GITHUB_ENV
+            echo 'CI_COMMIT_SHA=${{ inputs.commit_sha }}' >> $GITHUB_ENV
+      - id: prepare-docker
+        uses: ./.github/actions/prepare-docker-env
+        with:
+            docker_user: ${{ inputs.docker_user }}
+            docker_password: ${{ inputs.docker_password }}
+      - id: build-image
+        run: |
+          bash devops/docker/ci/build-images.sh
+        shell: bash
+      - id: push-image
+        run: bash devops/docker/ci/push-images.sh
+        shell: bash
