@@ -25,16 +25,23 @@ const editMovieSchema = z.object({
 
 const PER_PAGE = 10;
 
-export async function getUserMovies(page: number) {
+export async function getUserMovies(page: number = 1) {
     const session = await getServerSession(authOptions);
 
     // Return early if the form data is invalid
     if (session && session.user) {
         console.log('found session', session.user);
 
+        if (page < 1) {
+            page = 1;
+        }
         const params: PaginationParam = { pageNumber: page, perPage: PER_PAGE };
-        const movies = (await MovieModel.findAll({ where: { userId: (session.user as any).id }, limit: params.perPage, offset: getOffsetFromPagination(params) }));
         const totalCount = await MovieModel.count({ where: { userId: (session.user as any).id } });
+        const lastPage = Math.ceil(totalCount / PER_PAGE);
+        if (lastPage < page) {
+            page = lastPage;
+        }
+        const movies = (await MovieModel.findAll({ where: { userId: (session.user as any).id }, limit: params.perPage, offset: getOffsetFromPagination(params) }));
         return {
             items: movies,
             paginationMeta: getPaginationMeta(params, { items: movies, total: totalCount })

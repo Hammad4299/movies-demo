@@ -14,7 +14,7 @@ export default withAuth(
             authorized: ({ req, token }: any) => {
 
                 if (
-                    !req.nextUrl.pathname.includes('login') && token == null
+                    !req.nextUrl.pathname.includes('signin') && token == null
                 ) {
                     return false
                 }

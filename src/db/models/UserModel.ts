@@ -36,10 +36,10 @@ export const UserModel = sequelizeClient.define<UserModelType>(
 );
 
 // associations can be defined here
-UserModel.hasMany(MovieModel, {
-    foreignKey: 'userId',
-    as: 'movies',
-    onDelete: 'CASCADE',
-});
+// UserModel.hasMany(MovieModel, {
+//     foreignKey: 'userId',
+//     as: 'movies',
+//     onDelete: 'CASCADE',
+// });
 
 export default UserModel;

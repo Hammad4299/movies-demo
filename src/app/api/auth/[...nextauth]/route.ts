@@ -53,10 +53,10 @@ export const authOptions: AuthOptions = {
             return { ...session, user: sanitizedToken, apiToken: token.apiToken }
         },
     },
-    pages: {
-        signIn: '/login',
-        signOut: '/logout'
-    }
+    // pages: {
+    //     signIn: '/login',
+    //     signOut: '/logout'
+    // }
 }
 
 const handler = NextAuth(authOptions)
