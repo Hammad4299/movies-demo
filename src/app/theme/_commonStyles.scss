@@ -1,0 +1,114 @@
+.root {
+	&.align {
+		@apply flex justify-center items-center;
+	}
+	&.bgPrimary {
+		@apply bg-primary;
+	}
+	&.bgSecondary {
+		@apply bg-secondary;
+	}
+	&.bgSuccess {
+		@apply bg-success;
+	}
+	&.bgError {
+		@apply bg-error;
+	}
+	&.primary {
+		@apply text-primary;
+	}
+	&.secondary {
+		@apply text-secondary;
+	}
+	&.success {
+		@apply text-success;
+	}
+	&.successDark {
+		@apply text-successDark;
+	}
+	&.light {
+		@apply text-white;
+	}
+	&.dark {
+		@apply text-gray-700;
+	}
+	&.error {
+		@apply text-error;
+	}
+
+	&.borderPrimary {
+		@apply border border-primary;
+	}
+	&.borderSecondary {
+		@apply border border-secondary;
+	}
+	&.borderSuccess {
+		@apply border border-success;
+	}
+	&.borderError {
+		@apply border border-error;
+	}
+	&.sm {
+		@apply p-1 m-1 text-sm;
+	}
+	&.md {
+		@apply p-2 m-2 text-lg;
+	}
+	&.lg {
+		@apply p-3 m-3 text-xl;
+	}
+}
+
+// For Svg:
+
+.root {
+	&.align svg {
+		@apply flex justify-center items-center;
+	}
+	&.primary svg {
+		@apply text-primary;
+	}
+	&.secondary svg {
+		@apply text-secondary;
+	}
+	&.light svg {
+		@apply text-white;
+	}
+	&.dark svg {
+		@apply text-gray-700;
+	}
+	&.error svg {
+		@apply text-error;
+	}
+	&.success svg {
+		@apply text-success;
+	}
+	&.sm svg {
+		@apply h-4 w-4;
+	}
+	&.md svg {
+		@apply h-[1.25rem] w-[1.25rem];
+	}
+	&.lg svg {
+		@apply h-6 w-6;
+	}
+}
+
+// For inputs:
+
+.parentScrollBar {
+	&::-webkit-scrollbar {
+		width: 8px;
+		height: 8px;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background: gray;
+		border-radius: 8px;
+	}
+
+	&::-webkit-scrollbar-track {
+		background: rgba(0, 0, 0, 0.1);
+		border-radius: 8px;
+	}
+}
