@@ -1,7 +1,6 @@
 import { getMovie } from "@/app/actions";
 import AppButton from "@/components/form/button";
 import CreateEditMovie from "@/components/views/CreateEditMovie";
-import { myFnSingle } from "@/temp-methods/my-fn";
 import Link from "next/link";
 import React from "react";
 interface Props {

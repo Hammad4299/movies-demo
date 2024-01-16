@@ -1,6 +1,5 @@
 "use client";
 import { Movie } from "@/models";
-import { myFn } from "@/temp-methods/my-fn";
 import React, { useState } from "react";
 import AppButton from "../form/button";
 import Link from "next/link";
@@ -25,7 +24,7 @@ export const Home: React.FC<Props> = ({ data }) => {
     }
 
     async function updatePageIndex(page: number) {
-        setPageNumber(pageNumber);
+        setPageNumber(page);
         const data = await fetchMovieList(page);
         setMovieList(data?.items || []);
         if (data?.paginationMeta.totalPages !== maxPages) {

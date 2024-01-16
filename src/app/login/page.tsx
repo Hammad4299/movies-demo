@@ -9,6 +9,7 @@ import { signIn } from "next-auth/react";
 
 const LoginScreen: React.FC = () => {
     const router = useRouter();
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
         email: "",
         password: "",
@@ -20,32 +21,39 @@ const LoginScreen: React.FC = () => {
     function handleFormChange(event: React.ChangeEvent<HTMLInputElement>) {
         const name = event.target.name as "email" | "password";
         setFormData({ ...formData, [name]: event.target.value });
+
         setErrorState({ ...errorState, [name]: "" });
     }
 
     async function handleFormSubmit() {
-        const { email, password } = formData;
-        const newErrorState: Partial<typeof errorState> = {};
-        if (!email || !validateEmail(email)) {
-            newErrorState.email = "Please enter a valid email";
-        }
-        if (password.length < 6) {
-            newErrorState.password =
-                "Password must be at-least 6 characters long";
-        }
-        if (Object.keys(newErrorState).length === 0) {
-            const resp = await signIn("credentials", {
-                redirect: false,
-                email,
-                password,
-            });
-
-            if (resp?.ok) {
-                router.push("/");
+        setIsSubmitting(true);
+        try {
+            const { email, password } = formData;
+            const newErrorState: Partial<typeof errorState> = {};
+            if (!email || !validateEmail(email)) {
+                newErrorState.email = "Please enter a valid email";
             }
-        } else {
-            setErrorState({ ...errorState, ...newErrorState });
+            if (password.length < 6) {
+                newErrorState.password =
+                    "Password must be at-least 6 characters long";
+            }
+            if (Object.keys(newErrorState).length === 0) {
+                const resp = await signIn("credentials", {
+                    redirect: false,
+                    email,
+                    password,
+                });
+
+                if (resp?.ok) {
+                    router.push("/");
+                }
+            } else {
+                setErrorState({ ...errorState, ...newErrorState });
+            }
+        } catch (e) {
+            console.error(e);
         }
+        setIsSubmitting(false);
     }
 
     return (
@@ -80,7 +88,10 @@ const LoginScreen: React.FC = () => {
                         Remember Me
                     </label>
                 </div>
-                <AppButton onClick={handleFormSubmit} className="mt-4">
+                <AppButton
+                    loading={isSubmitting}
+                    onClick={handleFormSubmit}
+                    className="mt-4">
                     Login
                 </AppButton>
             </div>
