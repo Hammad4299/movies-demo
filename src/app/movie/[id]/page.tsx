@@ -1,11 +1,15 @@
+import { getMovie } from "@/app/actions";
 import AppButton from "@/components/form/button";
 import CreateEditMovie from "@/components/views/CreateEditMovie";
-import { myFnSingle } from "@/temp-methods/my-fn";
 import Link from "next/link";
 import React from "react";
-
-export const EditMoviePage: React.FC = async () => {
-    const data = await myFnSingle(1);
+interface Props {
+    params: {
+        id: string;
+    };
+}
+export const EditMoviePage: React.FC<Props> = async ({ params }) => {
+    const data = await getMovie(Number(params.id));
 
     if (!data) {
         return (
