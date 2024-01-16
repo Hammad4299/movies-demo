@@ -3,7 +3,7 @@ version: '3'
 services:
     movie-demo:
         restart: always
-        image: 415579337695.dkr.ecr.us-east-2.amazonaws.com/movies-demo-dev-movies-demo:10
+        image: 415579337695.dkr.ecr.us-east-2.amazonaws.com/movies-demo-dev-movies-demo:11
         labels:
             - 'traefik.enable=true'
             - 'traefik.http.middlewares.redirect.redirectscheme.scheme=https'
