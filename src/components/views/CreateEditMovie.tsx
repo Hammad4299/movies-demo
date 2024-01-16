@@ -7,25 +7,24 @@ import { Movie, MovieCreatePayload } from "@/models";
 import { validateMoviePayload } from "@/helpers";
 import { useRouter } from "next/navigation";
 import { addMovie, updateMovie } from "@/app/actions";
-import { useSession } from "next-auth/react";
 
 interface Props {
     data?: Movie;
 }
 
 export const CreateEditMovie: React.FC<Props> = ({ data }) => {
-    const [movieData, setFormData] = useState<MovieCreatePayload>(
+    const [movieData, setFormData] = useState<MovieCreatePayload | Movie>(
         data || {
             poster: "",
             title: "",
             year: NaN,
         }
     );
-    const session = useSession();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const router = useRouter();
 
     const [image, setImage] = useState<File | null>(null);
+
     function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
         const file = event.target.files?.[0];
         if (movieData.poster) {
@@ -62,19 +61,38 @@ export const CreateEditMovie: React.FC<Props> = ({ data }) => {
         const formData = new FormData();
         formData.append("title", movieData.title);
         formData.append("year", movieData.year.toString());
+        console.log(image);
         if (image) {
             formData.append("file", image);
         }
         setIsSubmitting(true);
         if ("id" in movieData) {
-            updateMovie(formData);
+            formData.append("id", movieData.id.toString());
+            const res = await updateMovie(formData);
+            console.log(res);
         } else {
-            const reda = await addMovie(formData);
-            console.log("I am done", reda);
+            await addMovie(formData);
         }
         setIsSubmitting(false);
+        router.push("/");
     };
-
+    function handleFileDrop(e: React.DragEvent<HTMLLabelElement>) {
+        e.preventDefault();
+        const file = e.dataTransfer.files[0];
+        if (movieData.poster) {
+            try {
+                URL.revokeObjectURL(movieData.poster);
+                setFormData({ ...movieData, poster: "" });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+        if (file) {
+            setImage(file);
+            const url = URL.createObjectURL(file);
+            setFormData({ ...movieData, poster: url });
+        }
+    }
     return (
         <div className="pt-20 container mx-auto">
             <h2 className="text-h2 font-semibold mb-12">
@@ -82,6 +100,8 @@ export const CreateEditMovie: React.FC<Props> = ({ data }) => {
             </h2>
             <div className="grid lg:grid-cols-2 grid-cols-1 items-center gap-8">
                 <label
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={handleFileDrop}
                     htmlFor="file-input"
                     style={{ aspectRatio: "1/1" }}
                     className="border-2 w-3/4 border-white cursor-pointer border-dotted bg-inputColor rounded-[10px] flex items-center justify-center flex-col">

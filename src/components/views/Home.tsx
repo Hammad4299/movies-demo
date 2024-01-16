@@ -8,23 +8,29 @@ import { Header } from "./Header";
 import { useRouter } from "next/navigation";
 import { PaginationHandler } from "../pagination/paginator";
 import { PaginatedResponse } from "@/types/pagination";
+import { getUserMovies } from "@/app/actions";
 
 interface Props {
     data?: PaginatedResponse<Movie>;
 }
 export const Home: React.FC<Props> = ({ data }) => {
     const [movieList, setMovieList] = useState(data?.items || []);
-    const maxPages = 10;
+    const [maxPages, setMaxPages] = useState(
+        data?.paginationMeta.totalPages || 1
+    );
     const router = useRouter();
     const [pageNumber, setPageNumber] = useState(1);
     async function fetchMovieList(page = pageNumber) {
-        return await myFn(page);
+        return await getUserMovies(page);
     }
 
     async function updatePageIndex(page: number) {
         setPageNumber(pageNumber);
         const data = await fetchMovieList(page);
-        setMovieList(data);
+        setMovieList(data?.items || []);
+        if (data?.paginationMeta.totalPages !== maxPages) {
+            setMaxPages(data?.paginationMeta.totalPages);
+        }
     }
     return (
         <div>
@@ -57,6 +63,9 @@ export const Home: React.FC<Props> = ({ data }) => {
                                     className="pb-2 mb-1"
                                     style={{ aspectRatio: "133/200" }}>
                                     <img
+                                        style={{
+                                            aspectRatio: "133/200",
+                                        }}
                                         src={movie.poster}
                                         alt={movie.title}
                                         className="object-cover min-h-full min-w-full rounded-[10px]"
