@@ -1,5 +1,4 @@
 import type { Config } from "tailwindcss";
-import type { PluginUtils } from "tailwindcss/types/config";
 
 const config: Config = {
     content: [
@@ -18,7 +17,7 @@ const config: Config = {
             },
             colors: () => ({
                 appColor: {
-                    100: "#ebcfcf",
+                    100: "#092C39",
                     200: "#d79f9f",
                     300: "#c46e6e",
                     400: "#b03e3e",
@@ -58,7 +57,9 @@ const config: Config = {
             fontSize: () => ({
                 h1: "80px",
                 h2: "48px",
-                regular: "14px",
+                h5: "20px",
+                regular: "16px",
+                bodySmall: "14px",
             }),
         },
     },
