@@ -1,6 +1,6 @@
 "use server";
 
-import { authOptions } from "@/app/api/auth/[...nextauth]";
+import { authOptions } from "@/app/api/auth/[...nextauth]/helper";
 import MovieModel from "@/db/models/MovieModel";
 import { Movie } from "@/models";
 import {
