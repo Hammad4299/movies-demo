@@ -5,6 +5,7 @@ import UserModel from "@/db/models/UserModel";
 
 interface MovieModelType extends Movie, Model<Movie> { }
 
+// define movie model
 export const MovieModel = sequelizeClient.define<MovieModelType>(
     "movie",
     {
@@ -36,6 +37,8 @@ export const MovieModel = sequelizeClient.define<MovieModelType>(
     }
 );
 
+
+// create relation
 MovieModel.belongsTo(UserModel);
 
 export default MovieModel;

@@ -5,6 +5,7 @@ import MovieModel from "@/db/models/MovieModel";
 
 interface UserModelType extends User, Model<User> { }
 
+// define user model
 export const UserModel = sequelizeClient.define<UserModelType>(
     "user",
     {
