@@ -1,4 +1,4 @@
-name: Deploy Production
+name: Deploy Dev
 on:
     push:
         branches: [develop]
@@ -8,7 +8,7 @@ jobs:
     prod-workflow:
         uses: ./.github/workflows/build-and-deploy.yml
         with:
-            environment: prod
+            environment: dev
             ecr_repo_url: ${{ vars.ecr_repo_url_dev }}
             docker_user: ${{ vars.docker_user }}
             aws_region: ${{ vars.aws_region }}
