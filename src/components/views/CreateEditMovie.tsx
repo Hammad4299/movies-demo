@@ -61,7 +61,6 @@ export const CreateEditMovie: React.FC<Props> = ({ data }) => {
         const formData = new FormData();
         formData.append("title", movieData.title);
         formData.append("year", movieData.year.toString());
-        console.log(image);
         if (image) {
             formData.append("file", image);
         }
@@ -69,12 +68,12 @@ export const CreateEditMovie: React.FC<Props> = ({ data }) => {
         if ("id" in movieData) {
             formData.append("id", movieData.id.toString());
             const res = await updateMovie(formData);
-            console.log(res);
         } else {
             await addMovie(formData);
         }
         setIsSubmitting(false);
-        router.push("/");
+
+        router.push("/?refresh=true");
     };
     function handleFileDrop(e: React.DragEvent<HTMLLabelElement>) {
         e.preventDefault();
@@ -94,17 +93,32 @@ export const CreateEditMovie: React.FC<Props> = ({ data }) => {
         }
     }
     return (
-        <div className="pt-20 container mx-auto">
+        <div className="pt-20 p-6 md:p-0 container mx-auto">
             <h2 className="text-h2 font-semibold mb-12">
                 {data ? "Edit" : "Create a new movie"}
             </h2>
-            <div className="grid lg:grid-cols-2 grid-cols-1 items-center gap-8">
+            <div className="md:grid flex flex-col-reverse md:grid-cols-2 grid-cols-1 items-center md:gap-8">
+                <div className="md:hidden flex gap-4 w-full mt-6">
+                    <AppButton
+                        onClick={() => router.push("/")}
+                        variant="secondary"
+                        className="grow">
+                        Cancel
+                    </AppButton>
+                    <AppButton
+                        onClick={() => submitForm()}
+                        loading={isSubmitting}
+                        disabled={!isFormValid}
+                        className="grow">
+                        Submit
+                    </AppButton>
+                </div>
                 <label
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={handleFileDrop}
                     htmlFor="file-input"
                     style={{ aspectRatio: "1/1" }}
-                    className="border-2 w-3/4 border-white cursor-pointer border-dotted bg-inputColor rounded-[10px] flex items-center justify-center flex-col">
+                    className="border-2 w-full lg:w-3/4 border-white cursor-pointer border-dotted bg-inputColor rounded-[10px] flex items-center justify-center flex-col">
                     <input
                         onChange={handleFileChange}
                         accept="image/*"
@@ -135,25 +149,25 @@ export const CreateEditMovie: React.FC<Props> = ({ data }) => {
                         </React.Fragment>
                     )}
                 </label>
-                <div className="h-full">
-                    <div className="mb-8">
+                <div className="h-full w-full">
+                    <div className="md:mb-8">
                         <InputComponent
                             name="title"
-                            className="!w-[50%]"
+                            className="lg:!w-[50%] "
                             placeholder="Title"
                             value={movieData.title}
                             onChange={handleFormChange}
                         />
                         <InputComponent
                             name="year"
-                            className="!w-[30%]"
+                            className="md:!w-[50%] lg:!w-[30%]"
                             placeholder="Publishing year"
                             type="number"
                             value={movieData.year}
                             onChange={handleFormChange}
                         />
                     </div>
-                    <div className="flex gap-4 w-[60%]">
+                    <div className="hidden md:flex gap-4 w-[60%]">
                         <AppButton
                             onClick={() => router.push("/")}
                             variant="secondary">
