@@ -6,9 +6,12 @@ export interface User {
     passwordHash: string;
 }
 
-export interface Movie {
+export interface MovieCreatePayload {
+    title: string;
+    poster: string;
+    year: number;
+}
+
+export interface Movie extends MovieCreatePayload {
     id: number;
-    title: string,
-    poster: string
-    year: number
 }

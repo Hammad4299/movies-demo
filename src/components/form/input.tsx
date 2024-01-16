@@ -10,7 +10,7 @@ export const InputComponent: React.FC<Props> = ({
     return (
         <div className="w-full ">
             <input
-                className={`mb-1 text-white rounded-[10px] px-3 py-2 bg-inputColor text-regular font-normal w-full border-inputColor placeholder-[rgba(255,255,255,0.8)] focus:bg-white focus:text-inputColor focus:placeholder-inputColor focus:border-inputColor border-solid border-[2px] duration-300 ${
+                className={`mb-1 text-white rounded-[10px] px-3 py-2 bg-inputColor text-bodySmall font-normal w-full border-inputColor placeholder-[rgba(255,255,255,0.8)] focus:bg-white focus:text-inputColor focus:placeholder-inputColor focus:border-inputColor border-solid border-[2px] duration-300 ${
                     error && `!border-error !text-error !placeholder-error`
                 } ${className}`}
                 {...props}
