@@ -9,11 +9,12 @@ import {
     getOffsetFromPagination,
     getPaginationMeta,
 } from "@/types/pagination";
-import { createReadStream } from "fs";
+import { createReadStream, existsSync, mkdirSync } from "fs";
 import { writeFile } from "fs/promises";
 import { defaultTo } from "lodash";
 import { getServerSession } from "next-auth/next";
 import path from "path";
+import { Op, where } from "sequelize";
 import { z } from "zod";
 
 const movSchema = {
@@ -74,10 +75,17 @@ export async function getUserMovies(page: number = 1) {
 const uploadFile = async (file: File) => {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    const relPath = `/public/movies/${Date.now()}_${file.name}`;
+    const fileName = `${Date.now()}_${file.name}`;
+    const relPath = `/movies/${fileName}`;
+
     // With the file data in the buffer, you can do whatever you want with it.
     // For this, we'll just write it to the filesystem in a new location
-    let filePath = path.join(defaultTo(process.env.PROJECT_ROOT?.toString(), relPath),);
+    let filePath = path.join(defaultTo(process.env.PROJECT_ROOT?.toString(), '/public'), relPath);
+
+    const dirPath = filePath.split(fileName)[0];
+    if (!existsSync(dirPath)) {
+        mkdirSync(dirPath);
+    }
 
     await writeFile(filePath, buffer);
     return relPath;
@@ -103,6 +111,21 @@ export async function addMovie(formData: FormData) {
     let filePath;
     if (file) {
         filePath = await uploadFile(file);
+    }
+
+    const alreadyExist = await MovieModel.findAll({
+        where: {
+            [Op.and]: [{
+                title: validatedFields.data.title
+            }, {
+                userId: userId
+            }, {
+                year: validatedFields.data.year
+            }]
+        }
+    });
+    if (alreadyExist.length > 0) {
+        throw new Error('Movie already added.');
     }
 
     // Mutate data
@@ -167,4 +190,12 @@ export async function deleteMovie(movieId: number) {
             id: movieId,
         },
     });
+}
+export async function getMovie(movieId: number) {
+    const movie = await MovieModel.findOne({
+        where: {
+            id: movieId,
+        },
+    });
+    return movie ? movie.toJSON() : null;
 }

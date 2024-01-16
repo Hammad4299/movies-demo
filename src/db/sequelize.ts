@@ -8,6 +8,7 @@ export const sequelizeClient = new Sequelize({
   username: databaseConfig.development.username,
   password: databaseConfig.development.password,
   host: databaseConfig.development.host,
+  port: Number(databaseConfig.development.port),
   database: databaseConfig.development.database,
   dialectModule: pg,
 });
