@@ -8,7 +8,7 @@ interface Props {
         id: string;
     };
 }
-export const EditMoviePage: React.FC<Props> = async ({ params }) => {
+const EditMoviePage: React.FC<Props> = async ({ params }) => {
     const data = await getMovie(Number(params.id));
 
     if (!data) {

@@ -1,0 +1,21 @@
+name: Deploy Production
+on:
+    push:
+        branches: [develop]
+permissions:
+    contents: write
+jobs:
+    prod-workflow:
+        uses: ./.github/workflows/build-and-deploy.yml
+        with:
+            environment: prod
+            ecr_repo_url: ${{ vars.ecr_repo_url_prod }}
+            docker_user: ${{ vars.docker_user }}
+            aws_region: ${{ vars.aws_region }}
+            aws_key_id: ${{ vars.aws_key_id }}
+            tf_infra_workspace_name: ${{vars.prod_infra_workspace}}
+            aws_account_id: ${{ vars.aws_account_id }}
+            tailscale_login_server: ${{ vars.tailscale_login_server }}
+            docker_compose_path: devops/docker/docker-compose.dev.yml
+            deployment_webhook_url: ${{ vars.deployment_webhook_url_prod }}
+        secrets: inherit

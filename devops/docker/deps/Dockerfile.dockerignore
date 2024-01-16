@@ -1,0 +1,9 @@
+node_modules/**/*
+.github/**/*
+.husky/**/*
+.vscode/**/*
+dist/**/*
+.env*
+.prettier*
+.editorconfig
+Dockerfile

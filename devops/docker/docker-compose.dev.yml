@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+    movie-demo:
+        restart: always
+        image: 415579337695.dkr.ecr.us-east-2.amazonaws.com/movies-demo-dev-movies-demo:6
+        labels:
+            - 'traefik.enable=true'
+            - 'traefik.http.middlewares.redirect.redirectscheme.scheme=https'
+            - 'traefik.http.middlewares.redirect.redirectscheme.permanent=true'
+            - 'traefik.http.routers.movies-demo-dev-http.rule=Host(`movies-demo-dev.teraception.com`)'
+            - 'traefik.http.routers.movies-demo-dev-http.entrypoints=web-public'
+            - 'traefik.http.routers.movies-demo-dev-http.middlewares=redirect'
+            - 'traefik.http.routers.movies-demo-dev-https.rule=Host(`movies-demo-dev.teraception.com`)'
+            - 'traefik.http.routers.movies-demo-dev-https.entrypoints=websecure-public'
+            - 'traefik.http.routers.movies-demo-dev-https.tls=true'
+            - 'traefik.http.routers.movies-demo-dev-https.tls.certresolver=myresolver'
+            - 'traefik.http.routers.movies-demo-dev.service=movies-demo-dev'
+            - 'traefik.http.services.movies-demo-dev.loadbalancer.server.port=3000'
+        volumes:
+            - movies-disk:/app/public/movies
+        environment:
+            - DB_USER=${DB_USER}
+            - DB_PASSWORD=${DB_PASSWORD}
+            - DB_HOST=${DB_HOST}
+            - DB_PORT=${DB_PORT}
+            - DB_NAME=${DB_NAME}
+            - AUTH_SECRET=${AUTH_SECRET}
+    postgres14:
+        image: postgres:14
+        volumes:
+            - db:/var/lib/postgresql/data
+        restart: always
+        hostname: postgres-default14
+        networks:
+            ledger-dev:
+                aliases:
+                    - postgres-default14
+        expose:
+            - 5432
+        ports:
+            - 5437:5432
+        environment:
+            - POSTGRES_PASSWORD=${DB_PASSWORD}
+volumes:
+    movies-disk:
+    db:

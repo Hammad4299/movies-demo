@@ -1,0 +1,27 @@
+name: "Prepare docker env"
+description: "Login in docker registeries and install tooling."
+inputs:
+
+    docker_user:
+        type: string
+        required: true
+    docker_password:
+        type: string
+        required: true
+
+runs:
+    using: "composite"
+    steps:
+      - id: init-env
+        shell: bash
+        run: |
+            echo "DOCKER_BUILDKIT=1" >> $GITHUB_ENV
+      - id: docker-login
+        shell: bash
+        run: |
+           echo $(aws sts get-caller-identity --query Account --output text)
+           echo $AWS_ACCESS_KEY_ID
+        #    docker login -u ${{ inputs.docker_user }} -p ${{ inputs.docker_password }}
+      - name: Login to Amazon ECR Private
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1

@@ -1,0 +1,42 @@
+name: release-github-package
+
+on: workflow_dispatch
+env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+    build-package:
+        runs-on: ubuntu-22.04
+        permissions:
+            packages: write
+            contents: write
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 18.19.0
+            - name: Install NPM Packages
+              run: yarn install
+
+            - name: Install NPM Packages
+              working-directory: lib
+              run: yarn install
+
+            - name: Build Packages
+              working-directory: lib
+              run: yarn package:build
+
+            - name: Adjust Environment
+              run: |
+                  cp devops/GithubPackages/package.json build-package/package.json
+                  cp devops/GithubPackages/.npmrc.example build-package/.npmrc
+
+            - name: Publish Package
+              working-directory: build-package
+
+              run: |
+                  yarn version --no-git-tag-version --new-version "0.0.${{ github.run_number }}"
+                  yarn publish
