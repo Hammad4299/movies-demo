@@ -17,5 +17,5 @@ jobs:
             aws_account_id: ${{ vars.aws_account_id }}
             tailscale_login_server: ${{ vars.tailscale_login_server }}
             docker_compose_path: devops/docker/docker-compose.dev.yml
-            deployment_webhook_url: ${{ vars.deployment_webhook_url_prod }}
+            deployment_webhook_url: ${{ vars.deployment_webhook_url_dev }}
         secrets: inherit
