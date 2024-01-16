@@ -58,6 +58,7 @@ export async function getUserMovies(page: number = 1) {
         }
         const movies = await MovieModel.findAll({
             where: { userId: id },
+            order: [['createdAt', 'DESC']],
             limit: params.perPage,
             offset: getOffsetFromPagination(params),
         });
@@ -80,7 +81,7 @@ const uploadFile = async (file: File) => {
 
     // With the file data in the buffer, you can do whatever you want with it.
     // For this, we'll just write it to the filesystem in a new location
-    let filePath = path.join(defaultTo(process.env.PROJECT_ROOT?.toString(), '/public'), relPath);
+    let filePath = path.join(defaultTo(process.env.PROJECT_ROOT?.toString(), ''), '/public', relPath);
 
     const dirPath = filePath.split(fileName)[0];
     if (!existsSync(dirPath)) {
