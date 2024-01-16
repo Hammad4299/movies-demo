@@ -7,17 +7,6 @@ export interface PaginationInfoDetail {
     totalPages: number;
 }
 
-export function getDefaultPaginationInfo(): PaginationInfoDetail {
-    return {
-        currentPage: 0,
-        end: 0,
-        start: 0,
-        totalItems: 0,
-        totalPages: 0,
-        perPage: 25,
-    };
-}
-
 export interface PaginatedResponse<T> {
     items: T[];
     paginationMeta: PaginationInfoDetail;
@@ -34,29 +23,6 @@ export function getOffsetFromPagination(pagination: PaginationParam) {
     }
     return (Math.max(pagination.pageNumber, 1) - 1) * pagination.perPage;
 }
-
-export async function paginator(
-    options: {
-        initialPage: number;
-        perPage: number;
-    },
-    runner: (
-        paginationParams: PaginationParam,
-    ) => Promise<PaginationInfoDetail>,
-) {
-    const params: PaginationParam = {
-        pageNumber: options.initialPage,
-        perPage: options.perPage,
-    };
-
-    let detail: PaginationInfoDetail;
-    do {
-        const meta = await runner(params);
-        params.pageNumber++;
-        detail = meta;
-    } while (detail.currentPage < detail.totalPages);
-}
-
 export function getPaginationMeta<T>(
     params: PaginationParam,
     result: {

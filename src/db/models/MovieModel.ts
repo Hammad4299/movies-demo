@@ -1,6 +1,7 @@
 import { User, Movie } from "@/models";
 import { sequelizeClient } from "../sequelize";
 import { DataTypes, Model } from "sequelize";
+import UserModel from "@/db/models/UserModel";
 
 interface MovieModelType extends Movie, Model<Movie> { }
 
@@ -25,10 +26,16 @@ export const MovieModel = sequelizeClient.define<MovieModelType>(
             defaultValue: false,
             allowNull: false,
         },
+        userId: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        }
     },
     {
         timestamps: true,
     }
 );
+
+MovieModel.belongsTo(UserModel);
 
 export default MovieModel;

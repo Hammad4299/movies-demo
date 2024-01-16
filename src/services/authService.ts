@@ -18,7 +18,6 @@ export const authenticateUser = async (email: string, password: string) => {
     if (user) {
         if (await checkPassword(password, user.passwordHash)) {
             const { passwordHash, ...userInfo } = user.toJSON();
-
             return { user: userInfo, token: jwt.sign(userInfo, authSecret, { expiresIn: '1h' }) };
         }
         throw new Error('Invalid credentials.')

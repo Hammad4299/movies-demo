@@ -4,11 +4,13 @@ export interface User {
     lastName: string;
     email: string;
     passwordHash: string;
+    movies?: Movie[]
 }
 
 export interface Movie {
     id: number;
     title: string,
     poster: string
+    userId: string
     year: number
 }

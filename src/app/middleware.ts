@@ -1,6 +1,6 @@
 import sequelizeClient from "@/db/sequelize";
 import { withAuth } from "next-auth/middleware"
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 // middleware is applied to all routes, use conditionals to select
 
@@ -11,10 +11,10 @@ export default withAuth(
     },
     {
         callbacks: {
-            authorized: ({ req, token }) => {
-                console.log('in middleware', req.nextUrl);
+            authorized: ({ req, token }: any) => {
+
                 if (
-                    !req.nextUrl.pathname.includes('login') && !req.nextUrl.pathname.includes('signin') && token == null
+                    !req.nextUrl.pathname.includes('login') && token == null
                 ) {
                     return false
                 }
