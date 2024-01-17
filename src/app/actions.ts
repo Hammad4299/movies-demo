@@ -81,11 +81,12 @@ export async function getUserMovies(page: number = 1) {
     throw new Error("Not authorized");
 }
 const uploadFile = async (file: File) => {
+    const userId = await getUserId();
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
     const fileName = `${Date.now()}_${file.name}`;
 
-    const relPath = `movies/${fileName}`;
+    const relPath = `users/${userId}/movies/${fileName}`;
     const resp = await s3Helper.UploadObject(buffer, relPath);
 
     return resp.Key;

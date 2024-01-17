@@ -1,5 +1,6 @@
 resource "aws_s3_bucket" "s3_bucket" {
   bucket = "${local.deployment_name}"
+  
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "s3_bucket_encryption" {
@@ -11,6 +12,13 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "s3_bucket_encrypt
       kms_master_key_id = ""
     }
     bucket_key_enabled = false
+  }
+}
+
+resource "aws_s3_bucket_ownership_controls" "bucket" {
+  bucket = aws_s3_bucket.s3_bucket.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
   }
 }
 
