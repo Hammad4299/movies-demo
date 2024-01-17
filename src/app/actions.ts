@@ -141,6 +141,9 @@ export async function addMovie(formData: FormData) {
 async function parseMovie(movie: MovieModelType) {
     const m = movie.toJSON();
 
+    if (m.poster) {
+        m.poster = s3Helper.getPublicUrl(m.poster);
+    }
     return m;
 }
 
