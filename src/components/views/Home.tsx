@@ -59,7 +59,7 @@ export const Home: React.FC<Props> = ({ data }) => {
         <div className="p-4 md:p-0">
             {!movieList?.length && (
                 <React.Fragment>
-                    <div className="min-h-screen text-white text-center flex justify-center items-center gap-3 flex-col">
+                    <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white text-center flex justify-center items-center gap-3 flex-col">
                         <h1
                             onClick={() => fetchMovieList()}
                             className="text-h1 text-bold">
@@ -71,26 +71,27 @@ export const Home: React.FC<Props> = ({ data }) => {
                     </div>
                 </React.Fragment>
             )}
-            {movieList?.length && movieList?.length > 0 && (
-                <div className="flex flex-col gap-3">
-                    <Header />
-                    <div className="grid 2xl:grid-cols-5 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 grid-cols-1 mt-16 gap-4">
-                        {movieList.map((movie) => (
-                            <MovieCard
-                                deleteMovie={deleteMovieFromList}
-                                key={movie.id}
-                                movie={movie}
-                            />
-                        ))}
+            {movieList?.length > 0 && movieList?.length > 0 && (
+                <React.Fragment>
+                    <div className="flex flex-col gap-3">
+                        <Header />
+                        <div className="grid 2xl:grid-cols-5 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 grid-cols-1 mt-16 gap-4">
+                            {movieList.map((movie) => (
+                                <MovieCard
+                                    deleteMovie={deleteMovieFromList}
+                                    key={movie.id}
+                                    movie={movie}
+                                />
+                            ))}
+                        </div>
                     </div>
-                </div>
+                    <PaginationHandler
+                        pageNumber={pageNumber}
+                        setPages={updatePageIndex}
+                        maxPages={maxPages}
+                    />
+                </React.Fragment>
             )}
-
-            <PaginationHandler
-                pageNumber={pageNumber}
-                setPages={updatePageIndex}
-                maxPages={maxPages}
-            />
         </div>
     );
 };
