@@ -31,7 +31,6 @@ COPY --from=build /app/public ./public
 
 COPY --from=build --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=build --chown=nextjs:nodejs /app/.next/static ./.next/static
-COPY --from=build --chown=nextjs:nodejs /app/.next/cache/images ./.next/static/cache/images
 COPY --from=build --chown=nextjs:nodejs  ["/app/node_modules","./node_modules"]
 USER nextjs
 ENV NODE_ENV production
