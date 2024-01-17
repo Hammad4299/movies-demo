@@ -7,7 +7,8 @@ import { Header } from "./Header";
 import { useRouter, useSearchParams } from "next/navigation";
 import { PaginationHandler } from "../pagination/paginator";
 import { PaginatedResponse } from "@/types/pagination";
-import { getUserMovies } from "@/app/actions";
+import { deleteMovie, getUserMovies } from "@/app/actions";
+import MovieCard from "./MovieCard";
 
 interface Props {
     data?: PaginatedResponse<Movie>;
@@ -34,7 +35,6 @@ export const Home: React.FC<Props> = ({ data }) => {
     const path = useSearchParams();
     useEffect(() => {
         const refreshVal = path.get("refresh");
-        console.log("I AM HERE", refreshVal);
         if (refreshVal) {
             router.push("/");
             setTimeout(() => {
@@ -42,9 +42,22 @@ export const Home: React.FC<Props> = ({ data }) => {
             }, 200);
         }
     }, []);
+
+    async function deleteMovieFromList(movieId: number) {
+        await deleteMovie(movieId);
+        setMovieList((oldList) => {
+            const newList = [...oldList];
+            const index = newList.findIndex((item) => item.id === movieId);
+            if (index !== -1) {
+                newList.splice(index, 1);
+            }
+            return newList;
+        });
+        updatePageIndex(pageNumber);
+    }
     return (
         <div className="p-4 md:p-0">
-            {!data?.items.length && (
+            {!movieList?.length && (
                 <React.Fragment>
                     <div className="min-h-screen text-white text-center flex justify-center items-center gap-3 flex-col">
                         <h1
@@ -58,34 +71,16 @@ export const Home: React.FC<Props> = ({ data }) => {
                     </div>
                 </React.Fragment>
             )}
-            {data?.items.length && data?.items.length > 0 && (
+            {movieList?.length && movieList?.length > 0 && (
                 <div className="flex flex-col gap-3">
                     <Header />
                     <div className="grid 2xl:grid-cols-5 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 grid-cols-1 mt-16 gap-4">
                         {movieList.map((movie) => (
-                            <div
-                                onClick={() =>
-                                    router.push(`/movie/${movie.id}`)
-                                }
+                            <MovieCard
+                                deleteMovie={deleteMovieFromList}
                                 key={movie.id}
-                                className="hover:bg-[#1e414e] bg-appColor-100 rounded-[12px] p-4 pb-8 md:p-2 md:pb-4 cursor-pointer duration-500 hover:bg-red">
-                                <div
-                                    className="pb-2 mb-1"
-                                    style={{ aspectRatio: "133/200" }}>
-                                    <img
-                                        style={{
-                                            aspectRatio: "133/200",
-                                        }}
-                                        src={movie.poster}
-                                        alt={movie.title}
-                                        className="object-cover min-h-full min-w-full rounded-[10px]"
-                                    />
-                                </div>
-                                <h5 className="font-medium">{movie.title}</h5>
-                                <span className="text-bodySmall font-normal">
-                                    {movie.year}
-                                </span>
-                            </div>
+                                movie={movie}
+                            />
                         ))}
                     </div>
                 </div>

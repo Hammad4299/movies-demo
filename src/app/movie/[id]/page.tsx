@@ -13,7 +13,7 @@ const EditMoviePage: React.FC<Props> = async ({ params }) => {
 
     if (!data) {
         return (
-            <div className="flex items-center justify-center flex-col">
+            <div className="flex items-center justify-center flex-col absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
                 <h1 className="text-center text-h1 font-bold">
                     404 Not Found...
                 </h1>
