@@ -5,7 +5,7 @@ const nextConfig = {
         remotePatterns: [
             {
                 protocol: "https",
-                hostname: "movies-demo-dev.us-east-2.s3.amazonaws.com",
+                hostname: "movies-demo-dev.s3.us-east-2.amazonaws.com",
             },
         ],
     },
