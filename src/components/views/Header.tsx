@@ -6,6 +6,8 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
+import addIcon from "@/../public/img/add-btn.png";
+import logoutIcon from "@/../public/img/logout.png";
 
 export const Header: React.FC = () => {
     const { data: session, status } = useSession();
@@ -22,7 +24,7 @@ export const Header: React.FC = () => {
                 <Link href="/movie" className="mt-1">
                     <Image
                         alt="Add new image"
-                        src="/img/add-btn.png"
+                        src={addIcon}
                         width="30"
                         height="30"
                     />
@@ -31,9 +33,11 @@ export const Header: React.FC = () => {
                     <div
                         onClick={() => logoutUser()}
                         className="cursor-pointer ml-auto  flex items-center justify-end gap-2">
-                        <span className="text-[16px] font-bold hidden md:block">Logout</span>
+                        <span className="text-[16px] font-bold hidden md:block">
+                            Logout
+                        </span>
                         <Image
-                            src="/img/logout.png"
+                            src={logoutIcon}
                             alt="LogoutImg"
                             width="30"
                             height="30"

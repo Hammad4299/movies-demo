@@ -7,7 +7,7 @@ import { Movie, MovieCreatePayload } from "@/models";
 import { validateMoviePayload } from "@/helpers";
 import { useRouter } from "next/navigation";
 import { addMovie, updateMovie } from "@/app/actions";
-
+import downloadIcon from "@/../public/img/download.png";
 interface Props {
     data?: Movie;
 }
@@ -138,7 +138,7 @@ export const CreateEditMovie: React.FC<Props> = ({ data }) => {
                     ) : (
                         <React.Fragment>
                             <Image
-                                src="/img/download.png"
+                                src={downloadIcon}
                                 alt="download-img"
                                 width="20"
                                 height="20"

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import React, { useMemo } from "react";
+import spinner from "@/../public/img/spinner.svg";
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: "primary" | "secondary";
     loading?: boolean;
@@ -38,7 +39,7 @@ export const AppButton: React.FC<Props> = ({
                 }`}>
                 <Image
                     className="animate-spin"
-                    src="/img/spinner.svg"
+                    src={spinner}
                     alt="loading"
                     width="20"
                     height="20"

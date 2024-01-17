@@ -1,31 +1,31 @@
-version: '3'
+version: "3"
 
 services:
     movie-demo:
         restart: always
         image: 415579337695.dkr.ecr.us-east-2.amazonaws.com/movies-demo-dev-movies-demo:13
         labels:
-            - 'traefik.enable=true'
-            - 'traefik.http.middlewares.redirect.redirectscheme.scheme=https'
-            - 'traefik.http.middlewares.redirect.redirectscheme.permanent=true'
-            - 'traefik.http.routers.movies-demo-dev-http.rule=Host(`movies-demo-dev.teraception.com`)'
-            - 'traefik.http.routers.movies-demo-dev-http.entrypoints=web-public'
-            - 'traefik.http.routers.movies-demo-dev-http.middlewares=redirect'
-            - 'traefik.http.routers.movies-demo-dev-https.rule=Host(`movies-demo-dev.teraception.com`)'
-            - 'traefik.http.routers.movies-demo-dev-https.entrypoints=websecure-public'
-            - 'traefik.http.routers.movies-demo-dev-https.tls=true'
-            - 'traefik.http.routers.movies-demo-dev-https.tls.certresolver=myresolver'
-            - 'traefik.http.routers.movies-demo-dev.service=movies-demo-dev'
-            - 'traefik.http.services.movies-demo-dev.loadbalancer.server.port=3000'
+            - "traefik.enable=true"
+            - "traefik.http.middlewares.redirect.redirectscheme.scheme=https"
+            - "traefik.http.middlewares.redirect.redirectscheme.permanent=true"
+            - "traefik.http.routers.movies-demo-dev-http.rule=Host(`movies-demo-dev.teraception.com`)"
+            - "traefik.http.routers.movies-demo-dev-http.entrypoints=web-public"
+            - "traefik.http.routers.movies-demo-dev-http.middlewares=redirect"
+            - "traefik.http.routers.movies-demo-dev-https.rule=Host(`movies-demo-dev.teraception.com`)"
+            - "traefik.http.routers.movies-demo-dev-https.entrypoints=websecure-public"
+            - "traefik.http.routers.movies-demo-dev-https.tls=true"
+            - "traefik.http.routers.movies-demo-dev-https.tls.certresolver=myresolver"
+            - "traefik.http.routers.movies-demo-dev.service=movies-demo-dev"
+            - "traefik.http.services.movies-demo-dev.loadbalancer.server.port=3000"
         volumes:
             - movies-disk:/app/public/movies
         networks:
             movies-demo:
         environment:
-            - DB_USER=postgres  #default
+            - DB_USER=postgres #default
             - DB_PASSWORD=${DB_PASSWORD}
             - DB_HOST=postgres-default14 #from compose
-            - DB_PORT=5432  #default
+            - DB_PORT=5432 #default
             - DB_NAME=${DB_NAME}
             - AUTH_SECRET=${AUTH_SECRET}
     postgres14:
@@ -46,7 +46,7 @@ services:
             - POSTGRES_PASSWORD=${DB_PASSWORD}
             - POSTGRES_DB=${DB_NAME}
 networks:
-  movies-demo:        
+    movies-demo:
 volumes:
     movies-disk:
     db:

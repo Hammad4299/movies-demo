@@ -6,6 +6,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/helper";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
+import backgroundImg from "@/../public/img/bg-bottom-bar.png";
 
 export const metadata: Metadata = {
     title: "Movies App",
@@ -33,7 +34,7 @@ export default async function RootLayout({
                             alt=""
                             width="1920"
                             height="1080"
-                            src="/img/bg-bottom-bar.png"
+                            src={backgroundImg}
                         />
                     </div>
                 </Provider>
