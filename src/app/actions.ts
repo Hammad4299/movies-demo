@@ -36,7 +36,7 @@ const editMovieSchema = z.object({
     id: z.number(),
 });
 
-const PER_PAGE = 2;
+const PER_PAGE = 10;
 async function getUserId() {
     const session = await getServerSession(authOptions);
     const user = session?.user as User;
