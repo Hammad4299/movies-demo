@@ -14,19 +14,28 @@ COPY --chown=node ["./tsconfig*.json", "./next.config.js", "./tailwind.config.ts
 COPY --chown=node ["./public", "./public"]
 COPY --chown=node ["./src", "./src"]
 RUN yarn run build \
-    && yarn install \
-    && rm -r .next/cache
+    && yarn install
 
-#creating actual image of the created build
+# #creating actual image of the created build
 FROM node:20-alpine
 WORKDIR /app
-RUN chown -R node /app
-COPY --chown=node --from=build [ "/app/package.json","/app/yarn.lock", "/app/.sequelizerc", "./"]
-COPY --chown=node --from=build ["/app/.next", "./.next"]
-COPY --chown=node --from=build ["/app/public", "./public"]
-COPY --chown=node --from=build ["/app/node_modules","/app/node_modules"]
-USER node
+
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nextjs -u 1001
+
+COPY --chown=nextjs:nodejs --from=build [ "/app/package.json","/app/yarn.lock", "/app/.sequelizerc", "./"]
+
+COPY --from=build /app/public ./public
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+
+COPY --from=build --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=build --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=build --chown=nextjs:nodejs /app/.next/cache/images ./.next/static/cache/images
+COPY --from=build --chown=nextjs:nodejs  ["/app/node_modules","./node_modules"]
+USER nextjs
 ENV NODE_ENV production
+ENV PORT 3000
 ENV PROJECT_ROOT /app
 EXPOSE 3000
-CMD yarn run start
+CMD node server.js

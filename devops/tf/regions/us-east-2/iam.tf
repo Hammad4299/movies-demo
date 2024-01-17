@@ -51,13 +51,6 @@ data "aws_iam_policy_document" "allow_image_pull" {
   }
 }
 
-resource "aws_iam_role_policy" "allow_image_pull" {
-  name   = "allow-image-pull-movies-demo"
-  role   = var.docker_general_instance_role_name
-  policy = data.aws_iam_policy_document.allow_image_pull.json
-}
-
-
 resource "aws_iam_user_policy" "allow_image_pull" {
   name   = "allow-image-pull-movies-demo"
   user   = var.docker_general_portainer_user_name
@@ -69,4 +62,32 @@ resource "aws_iam_user" "app_user" {
   name          = "${local.deployment_name}-app-user"
   path          = "/movies-demo/"
   force_destroy = true
+}
+
+
+data "aws_iam_policy_document" "allow_s3_access" {
+  statement {
+    effect = "Allow"
+
+    resources = [
+      aws_s3_bucket.s3_bucket.arn,
+      "${aws_s3_bucket.s3_bucket.arn}/*"
+    ]
+
+    actions = [
+      "s3:PutObject",
+      "s3:GetObjectAcl",
+      "s3:GetObject",
+      "s3:ListBucket",
+      "s3:PutObjectAcl",
+      "s3:GetBucketAcl",
+      "s3:DeleteObject"
+    ]
+  }
+}
+
+resource "aws_iam_user_policy" "allow_s3_access" {
+  name   = "allow-to-store-uploads"
+  user   = aws_iam_user.app_user.name
+  policy = data.aws_iam_policy_document.allow_s3_access.json
 }
