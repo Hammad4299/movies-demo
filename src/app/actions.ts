@@ -1,8 +1,10 @@
 "use server";
 
 import { authOptions } from "@/app/api/auth/[...nextauth]/helper";
-import MovieModel from "@/db/models/MovieModel";
-import { Movie } from "@/models";
+import envConfig from "@/config";
+import MovieModel, { MovieModelType } from "@/db/models/MovieModel";
+import { s3Helper } from "@/helpers/s3Helper";
+import { Movie, User } from "@/models";
 import {
     PaginatedResponse,
     PaginationParam,
@@ -11,7 +13,7 @@ import {
 } from "@/types/pagination";
 import { createReadStream, existsSync, mkdirSync } from "fs";
 import { writeFile } from "fs/promises";
-import { defaultTo } from "lodash";
+import { defaultTo, forEach } from "lodash";
 import { getServerSession } from "next-auth/next";
 import path from "path";
 import { Op, where } from "sequelize";
@@ -37,8 +39,7 @@ const editMovieSchema = z.object({
 const PER_PAGE = 2;
 async function getUserId() {
     const session = await getServerSession(authOptions);
-    console.log("found session", session?.user);
-    const user = session?.user as any;
+    const user = session?.user as User;
     return user.id as string;
 }
 export async function getUserMovies(page: number = 1) {
@@ -62,8 +63,14 @@ export async function getUserMovies(page: number = 1) {
             limit: params.perPage,
             offset: getOffsetFromPagination(params),
         });
+        let moviesToRet: Movie[] = [];
+
+        movies.forEach(async (m) => {
+            moviesToRet.push(await parseMovie(m))
+        });
+
         return {
-            items: movies.map(m => m.toJSON()),
+            items: moviesToRet,
             paginationMeta: getPaginationMeta(params, {
                 items: movies,
                 total: totalCount,
@@ -77,19 +84,11 @@ const uploadFile = async (file: File) => {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
     const fileName = `${Date.now()}_${file.name}`;
-    const relPath = `/movies/${fileName}`;
 
-    // With the file data in the buffer, you can do whatever you want with it.
-    // For this, we'll just write it to the filesystem in a new location
-    let filePath = path.join(defaultTo(process.env.PROJECT_ROOT?.toString(), ''), '/public', relPath);
+    const relPath = `movies/${fileName}`;
+    const resp = await s3Helper.UploadObject(buffer, relPath);
 
-    const dirPath = filePath.split(fileName)[0];
-    if (!existsSync(dirPath)) {
-        mkdirSync(dirPath);
-    }
-
-    await writeFile(filePath, buffer);
-    return relPath;
+    return resp.Key;
 }
 
 export async function addMovie(formData: FormData) {
@@ -136,7 +135,13 @@ export async function addMovie(formData: FormData) {
     } as Movie);
 
     await newEntry.save();
-    return { data: newEntry.toJSON() };
+    return { data: await parseMovie(newEntry) };
+}
+
+async function parseMovie(movie: MovieModelType) {
+    const m = movie.toJSON();
+
+    return m;
 }
 
 export async function updateMovie(formData: FormData) {
@@ -182,7 +187,7 @@ export async function updateMovie(formData: FormData) {
 
     await row.save();
 
-    return { data: row.toJSON() };
+    return { data: await parseMovie(row) };
 }
 
 export async function deleteMovie(movieId: number) {
@@ -198,5 +203,5 @@ export async function getMovie(movieId: number) {
             id: movieId,
         },
     });
-    return movie ? movie.toJSON() : null;
+    return movie ? await parseMovie(movie) : null;
 }

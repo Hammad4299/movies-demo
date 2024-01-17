@@ -65,15 +65,22 @@ export const CreateEditMovie: React.FC<Props> = ({ data }) => {
             formData.append("file", image);
         }
         setIsSubmitting(true);
-        if ("id" in movieData) {
-            formData.append("id", movieData.id.toString());
-            const res = await updateMovie(formData);
-        } else {
-            await addMovie(formData);
-        }
+        let res;
+        try {
+            if ("id" in movieData) {
+                formData.append("id", movieData.id.toString());
+                res = await updateMovie(formData);
+            } else {
+                res = await addMovie(formData);
+            }
+        } catch (e) {}
         setIsSubmitting(false);
-
-        router.push("/?refresh=true");
+        console.log("update response", res);
+        if (!res || res.errors) {
+            console.log("got error", res?.errors);
+        } else {
+            router.push("/?refresh=true");
+        }
     };
     function handleFileDrop(e: React.DragEvent<HTMLLabelElement>) {
         e.preventDefault();

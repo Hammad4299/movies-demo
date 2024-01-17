@@ -1,3 +1,4 @@
+import envConfig from "@/config";
 import sequelizeClient from "@/db/sequelize";
 import { getToken } from "next-auth/jwt";
 import { withAuth } from "next-auth/middleware"
@@ -26,7 +27,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function middleware(req: NextRequest) {
     // in middleware we can't use getServerSession but we can use getToken to get session indirectly
-    const session = await getToken({ req: req, secret: process.env.AUTH_SECRET });
+    const session = await getToken({ req: req, secret: envConfig.nextAuthSecretKey });
     const isLogin = req.nextUrl.pathname.includes('login');
 
     // redirect user to correct authorized routes

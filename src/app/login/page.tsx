@@ -46,6 +46,19 @@ const LoginScreen: React.FC = () => {
 
                 if (resp?.ok) {
                     router.push("/?refresh=true");
+                } else {
+                    setErrorState(
+                        resp?.error &&
+                            resp?.error?.toLocaleLowerCase().includes("email")
+                            ? {
+                                  ...errorState,
+                                  email: resp?.error as string,
+                              }
+                            : {
+                                  ...errorState,
+                                  password: resp?.error as string,
+                              }
+                    );
                 }
             } else {
                 setErrorState({ ...errorState, ...newErrorState });

@@ -1,3 +1,4 @@
+import envConfig from "@/config";
 import { authenticateUser } from "@/services/authService";
 import type { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -31,7 +32,7 @@ export const authOptions: AuthOptions = {
             },
         }),
     ],
-    secret: process.env.AUTH_SECRET,
+    secret: envConfig.nextAuthSecretKey,
     session: { strategy: "jwt" },
     callbacks: {
         async jwt({ token, user, account }) {

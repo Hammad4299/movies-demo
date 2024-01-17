@@ -3,7 +3,7 @@ import { sequelizeClient } from "../sequelize";
 import { DataTypes, Model } from "sequelize";
 import UserModel from "@/db/models/UserModel";
 
-interface MovieModelType extends Movie, Model<Movie> { }
+export interface MovieModelType extends Movie, Model<Movie> { }
 
 // define movie model
 export const MovieModel = sequelizeClient.define<MovieModelType>(

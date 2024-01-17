@@ -1,5 +1,6 @@
 import { getUserMovies } from "@/app/actions";
 import Home from "@/components/views/Home";
+import envConfig from "@/config";
 import React from "react";
 
 const HomeServer: React.FC = async () => {
