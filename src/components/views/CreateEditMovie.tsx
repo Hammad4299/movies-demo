@@ -8,9 +8,16 @@ import { validateMoviePayload } from "@/helpers";
 import { useRouter } from "next/navigation";
 import { addMovie, updateMovie } from "@/app/actions";
 import downloadIcon from "@/../public/img/download.png";
+import Alert from "@/components/form/alert";
 interface Props {
     data?: Movie;
 }
+
+type CreateUpdateResponse = typeof addMovie | typeof updateMovie extends (
+    ...args: any[]
+) => Promise<infer T>
+    ? T
+    : unknown;
 
 export const CreateEditMovie: React.FC<Props> = ({ data }) => {
     const [movieData, setFormData] = useState<MovieCreatePayload | Movie>(
@@ -20,9 +27,13 @@ export const CreateEditMovie: React.FC<Props> = ({ data }) => {
             year: NaN,
         }
     );
+    const [alertMessage, setAlertMessage] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const router = useRouter();
-
+    const [errorList, setErrorList] = useState({
+        title: "",
+        year: "",
+    });
     const [image, setImage] = useState<File | null>(null);
 
     function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -44,6 +55,7 @@ export const CreateEditMovie: React.FC<Props> = ({ data }) => {
     function handleFormChange(event: React.ChangeEvent<HTMLInputElement>) {
         const name = event.target.name as keyof MovieCreatePayload;
         let value = event.target.value;
+        setErrorList({ ...errorList, [name]: "" });
         if (name === "year") {
             if (value.length > 4) {
                 value = value.substring(0, 4);
@@ -65,7 +77,7 @@ export const CreateEditMovie: React.FC<Props> = ({ data }) => {
             formData.append("file", image);
         }
         setIsSubmitting(true);
-        let res;
+        let res: CreateUpdateResponse | null = null;
         try {
             if ("id" in movieData) {
                 formData.append("id", movieData.id.toString());
@@ -73,14 +85,30 @@ export const CreateEditMovie: React.FC<Props> = ({ data }) => {
             } else {
                 res = await addMovie(formData);
             }
-        } catch (e) {}
-        setIsSubmitting(false);
-        console.log("update response", res);
-        if (!res || res.errors) {
-            console.log("got error", res?.errors);
-        } else {
-            router.push("/?refresh=true");
+            if (res?.errors) {
+                const errors = res.errors;
+                let errList = { ...errorList };
+                errList.title =
+                    (typeof errors?.title === "string"
+                        ? errors?.title
+                        : errors?.title?.[0]) || "";
+                errList.year =
+                    (typeof errors?.year === "string"
+                        ? errors?.year
+                        : errors?.year?.[0]) || "";
+                setErrorList(errList);
+            } else {
+                router.push("/?refresh=true");
+            }
+        } catch (e) {
+            console.error(e);
+            let message = "Unexpected error";
+            if (e && typeof e === "object" && "message" in e) {
+                message = e.message as string;
+            }
+            setAlertMessage(message);
         }
+        setIsSubmitting(false);
     };
     function handleFileDrop(e: React.DragEvent<HTMLLabelElement>) {
         e.preventDefault();
@@ -157,13 +185,14 @@ export const CreateEditMovie: React.FC<Props> = ({ data }) => {
                     )}
                 </label>
                 <div className="h-full w-full">
-                    <div className="md:mb-8">
+                    <div className="md:mb-8 flex flex-col gap-2">
                         <InputComponent
                             name="title"
                             className="lg:!w-[50%] "
                             placeholder="Title"
                             value={movieData.title}
                             onChange={handleFormChange}
+                            error={errorList.title}
                         />
                         <InputComponent
                             name="year"
@@ -172,6 +201,7 @@ export const CreateEditMovie: React.FC<Props> = ({ data }) => {
                             type="number"
                             value={movieData.year}
                             onChange={handleFormChange}
+                            error={errorList.year}
                         />
                     </div>
                     <div className="hidden md:flex gap-4 w-[60%]">
@@ -189,6 +219,7 @@ export const CreateEditMovie: React.FC<Props> = ({ data }) => {
                     </div>
                 </div>
             </div>
+            <Alert message={alertMessage} setMessage={setAlertMessage} />
         </div>
     );
 };

@@ -35,6 +35,7 @@ export default async function RootLayout({
                             width="1920"
                             height="1080"
                             src={backgroundImg}
+                            className="w-full"
                         />
                     </div>
                 </Provider>

@@ -45,7 +45,7 @@ const LoginScreen: React.FC = () => {
                 });
 
                 if (resp?.ok) {
-                    router.push("/?refresh=true");
+                    router.push("/");
                 } else {
                     setErrorState(
                         resp?.error &&

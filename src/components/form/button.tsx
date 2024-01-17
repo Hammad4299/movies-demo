@@ -30,6 +30,7 @@ export const AppButton: React.FC<Props> = ({
     }, [variant, disabled, loading]);
     return (
         <button
+            disabled={disabled}
             className={`duration-300 relative font-bold rounded-[10px] text-white outline-none w-full py-3 px-6 ${variantClasses} ${className} `}
             {...props}>
             <span className={loading ? "opacity-0" : ""}>{children}</span>
